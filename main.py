@@ -6,6 +6,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Cal
 from telegram.request import HTTPXRequest
 from src.config import TOKEN, FFMPEG_PATH
 from src.handlers import start, help_command, handle_message, button_handler, stats_command
+from src.keep_alive import keep_alive
 
 # Configure logging
 logging.basicConfig(
@@ -16,6 +17,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
+    # Start health check server for Docker environments
+    keep_alive()
+
     if not TOKEN or TOKEN == "your_token_here":
         logger.error("Error: BOT_TOKEN (or TELEGRAM_BOT_TOKEN) is not set.")
         sys.exit(1)
