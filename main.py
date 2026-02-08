@@ -1,7 +1,9 @@
 import logging
 import sys
 import os
+import shutil
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters
+from telegram.request import HTTPXRequest
 from src.config import TOKEN, FFMPEG_PATH
 from src.handlers import start, help_command, handle_message, button_handler, stats_command
 
@@ -15,16 +17,18 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
     if not TOKEN or TOKEN == "your_token_here":
-        logger.error("Error: TELEGRAM_BOT_TOKEN is not set in .env file.")
+        logger.error("Error: BOT_TOKEN (or TELEGRAM_BOT_TOKEN) is not set.")
         sys.exit(1)
 
-    if not os.path.exists(FFMPEG_PATH):
-        logger.warning(f"Warning: FFmpeg not found at {FFMPEG_PATH}. Video merging might fail or quality might be lower. Please install FFmpeg or ensure the binaries are in the bot root folder.")
+    if not shutil.which(str(FFMPEG_PATH)) and not os.path.exists(str(FFMPEG_PATH)):
+        logger.warning(f"Warning: FFmpeg not found at {FFMPEG_PATH}. Video merging might fail or quality might be lower. Please install FFmpeg.")
     else:
-        logger.info(f"FFmpeg found at: {FFMPEG_PATH}")
+        logger.info(f"FFmpeg found.")
 
     try:
-        application = ApplicationBuilder().token(TOKEN).build()
+        # Increase timeouts for large file uploads
+        request = HTTPXRequest(connect_timeout=60, read_timeout=120, write_timeout=120, pool_timeout=120)
+        application = ApplicationBuilder().token(TOKEN).request(request).build()
 
         start_handler = CommandHandler('start', start)
         help_handler = CommandHandler('help', help_command)

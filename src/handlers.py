@@ -145,8 +145,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     title=title,
                     caption=f"🎵 <b>{title}</b>",
                     parse_mode='HTML',
-                    read_timeout=120,
-                    write_timeout=120
+                    read_timeout=1200,
+                    write_timeout=1200
                 )
             else:
                 await context.bot.send_video(
@@ -155,8 +155,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     caption=f"🎥 <b>{title}</b> ({quality})",
                     parse_mode='HTML',
                     supports_streaming=True,
-                    read_timeout=120, 
-                    write_timeout=120
+                    read_timeout=1200, 
+                    write_timeout=1200
                 )
         
         # Increment stats
